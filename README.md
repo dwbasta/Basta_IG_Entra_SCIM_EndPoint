@@ -38,3 +38,28 @@ Invoke-RestMethod -Uri "https://hostname/SCIM/Users/2"`
  -Headers @{ "Authorization" = "Bearer yourAPIKey" } `
  -Method Get
 ```
+
+
+
+## HTTPS install
+1.) Install the public key on the server you are going to run the scim connector
+```
+$password = ConvertTo-SecureString -String "YourPfxPasswordHere" -AsPlainText -Force
+
+Import-PfxCertificate -FilePath "C:\PathToCertificate.pfx" `
+                      -CertStoreLocation "Cert:\LocalMachine\My" `
+                      -Password $password `
+                      -Exportable
+```
+
+2.) Get the thumbprint of the certificate
+```
+Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object { $_.Subject -like "*applicationtarg*" }
+```
+
+3.) Bind the Certificate to that port
+```
+netsh http add sslcert ipport=0.0.0.0:443 certhash=<thumbprint> appid="{<your-guid>}"
+```
+4.) Change the script to useHttps to true
+5.) Run the Sript with administrative rights
