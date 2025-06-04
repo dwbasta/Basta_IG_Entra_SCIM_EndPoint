@@ -3,20 +3,31 @@
 # =====================================================
 $Hostname    = "TestServer.Example.com"
 $BearerToken = "ThisIsYourAPIKeySoChangeMe"
+$useHttps    = $false    # <-- Set $true for HTTPS (requires a valid certificate on port 443), or $false for HTTP (port 80)
+
+# Determine protocol and port based on $useHttps value.
+if ($useHttps) {
+    $protocol = "https"
+    $port     = 443
+} else {
+    $protocol = "http"
+    $port     = 80
+}
 
 # =====================================================
 # Set up the HTTP Listener using wildcard prefixes.
 #
-# Note: HttpListener throws an error if the hostname in the prefix
-# isn't recognized on the local machine. Using '+' allows listening on
-# all hostnames. We'll validate the Host header later.
+# For HTTPS, the prefix will be e.g. "https://+:443/scim/"
+# For HTTP, the prefix will be e.g. "http://+:80/scim/"
+#
+# Note: When using HTTPS ($useHttps = $true), ensure you have a valid SSL certificate bound to the port.
 # =====================================================
 $listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("https://+:443/scim/")
-$listener.Prefixes.Add("https://+:443/scim/serviceproviderconfig/")
-$listener.Prefixes.Add("https://+:443/scim/users/")
+$listener.Prefixes.Add("${protocol}://+:${port}/scim/")
+$listener.Prefixes.Add("${protocol}://+:${port}/scim/serviceproviderconfig/")
+$listener.Prefixes.Add("${protocol}://+:${port}/scim/users/")
 $listener.Start()
-Write-Host "SCIM test server running. Expected hostname: https://$Hostname:443/scim/"
+Write-Host "SCIM test server running. Expected hostname: ${protocol}://${Hostname}:${port}/scim/"
 
 # =====================================================
 # Sample In-Memory User Store (add additional attributes as needed)
@@ -41,13 +52,13 @@ $users = @(
 # =====================================================
 
 # Constructs the SCIM JSON for a given user.
-# If a list of attribute names is supplied, only those keys are returned.
+# If a list of attribute names is provided in $attributes, only those keys are returned.
 function ConvertTo-ScimJson {
     param (
         [hashtable]$user,
         [string[]]$attributes
     )
-    # Start with the SCIM schema required property.
+    # Start with the required SCIM schema.
     $scimRepresentation = @{
         schemas = @("urn:ietf:params:scim:schemas:core:2.0:User")
     }
@@ -119,7 +130,7 @@ while ($listener.IsListening) {
         Write-Host "$_ : $($request.Headers[$_])"
     }
 
-    # API Key validation using the $BearerToken from configuration.
+    # API Key validation using the configured $BearerToken.
     $authHeader = $request.Headers["Authorization"]
     $providedKey = $null
     if ($authHeader -and $authHeader.StartsWith("Bearer ")) {
@@ -141,7 +152,7 @@ while ($listener.IsListening) {
     $response.ContentType = "application/scim+json"
     $response.StatusCode = 200
 
-    # GET /scim/users with optional attribute filtering and userName filter.
+    # GET /scim/users (with optional attribute filtering and userName filter)
     if ((($path -eq "/scim/users") -or ($path -eq "/scim/users/")) -and $request.HttpMethod -eq "GET") {
         $requestedAttrs = Get-RequestedAttributes $request.Url.Query
         $decodedQuery = [System.Net.WebUtility]::UrlDecode($request.Url.Query)
@@ -197,7 +208,7 @@ while ($listener.IsListening) {
             userName = $newUser.userName
             name     = $newUser.name
             active   = $newUser.active
-            # Add additional attributes if needed.
+            # Add any additional attributes as needed.
         }
         $users += $userObj
         $response.StatusCode = 201
@@ -211,7 +222,8 @@ while ($listener.IsListening) {
         if ($user) {
             if ($body.userName) { $user.userName = $body.userName }
             if ($body.name)     { $user.name = $body.name }
-            if ($body.active -ne $null) { $user.active = $body.active }
+            # Use backward null check as recommended:
+            if ($null -ne $body.active) { $user.active = $body.active }
             # Update additional attributes if provided.
             $responseBody = ConvertTo-ScimJson -user $user -attributes @()
         }
