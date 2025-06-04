@@ -7,6 +7,7 @@ Scim Endpoint is meant to be used with the [Entra On-premises SCIM app](https://
   - the Hostname which will be your TenantID in entra with the Http://Hostname.domain.com/scim setup
   - Edit the BearerToken which will be your SecretToken in entra
   - Set the useHttps to false
+  
 2.) Run the powershell script with administrative rights
 
 >[!NOTE]
