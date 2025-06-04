@@ -1,5 +1,5 @@
-# Basta_IG_Entra
-Any solution around the deployment/testing out Microsoft Entra identity governance solution.
+# Test SCIM EndPoint for Entra testing
+
 Scim Endpoint is meant to be used with the [Entra On-premises SCIM app](https://learn.microsoft.com/en-us/entra/identity/app-provisioning/on-premises-scim-provisioning)
 
 ## Starting the Scim Endpoint
