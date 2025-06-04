@@ -1,6 +1,6 @@
 # Test SCIM EndPoint for Entra testing
 
-Scim Endpoint is meant to be used with the [Entra On-premises SCIM app](https://learn.microsoft.com/en-us/entra/identity/app-provisioning/on-premises-scim-provisioning)
+Scim Endpoint is meant to be used with the Entra On-premises SCIM app in the Microsoft Gallery.
 
 ## Starting the Scim Endpoint
 1.) Edit the Scim_Test_Endpoints.ps1
@@ -12,3 +12,5 @@ Scim Endpoint is meant to be used with the [Entra On-premises SCIM app](https://
 
 >[!NOTE]
 > If successful will return "SCIM test server running. Expected Hostname: (Yourhostname)/SCIM
+
+3.) Install the cloud provisioning agent based on the following documentation on a separete server that can communicate to the SCIM endpoint and configure the [Entra On-premises SCIM app](https://learn.microsoft.com/en-us/entra/identity/app-provisioning/on-premises-scim-provisioning)
