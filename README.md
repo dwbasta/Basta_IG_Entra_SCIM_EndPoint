@@ -14,3 +14,27 @@ Scim Endpoint is meant to be used with the Entra On-premises SCIM app in the Mic
 > If successful will return "SCIM test server running. Expected Hostname: (Yourhostname)/SCIM
 
 3.) Install the cloud provisioning agent based on the following documentation on a separete server that can communicate to the SCIM endpoint and configure the [Entra On-premises SCIM app](https://learn.microsoft.com/en-us/entra/identity/app-provisioning/on-premises-scim-provisioning)
+
+4.) Test the configuration. The SCIM endpoint will output the file the request that are going to be sent over from the Entra Provisioning agent.
+
+## Testing the SCIM Endpoint out side of Entra
+
+### Test Get /Users
+```
+Invoke-RestMethod -Uri "http://hostname/SCIM/Users" `
+  -Headers @{ "Authorization" = "Bearer yourAPIKey" } `
+  -Method Get
+```
+### Test GET /Users with Filter
+```
+Invoke-RestMethod -Uri "http://hostname/SCIM/Users?filter=userName+eq+`"jdoe`"" `
+  -Headers @{ "Authorization" = "Bearer yourAPIKey" } `
+  -Method Get
+```
+
+### Test Get /User with Employee ID
+```
+Invoke-RestMethod -Uri "https://hostname/SCIM/Users/2"`
+ -Headers @{ "Authorization" = "Bearer yourAPIKey" } `
+ -Method Get
+```
