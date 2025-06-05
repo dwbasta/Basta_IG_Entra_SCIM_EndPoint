@@ -1,6 +1,8 @@
 # Test SCIM EndPoint for Entra testing
 
 Scim Endpoint is meant to be used with the Entra On-premises SCIM app in the Microsoft Gallery.
+> [!Warning]
+> I am not developer! This is not meant to be an example of how to implement SCIM. It is mainly use for testing feature of Entra
 
 ## Starting the Scim Endpoint
 1.) Edit the Scim_Test_Endpoints.ps1
