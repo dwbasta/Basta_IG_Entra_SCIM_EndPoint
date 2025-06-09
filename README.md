@@ -65,3 +65,9 @@ netsh http add sslcert ipport=0.0.0.0:443 certhash=<thumbprint> appid="{<your-gu
 ```
 4.) Change the script to useHttps to true
 5.) Run the Sript with administrative rights
+
+
+## Additional Attributes
+For the most part the SCIM endpoints loops through and does not need to add the code to handle new attributes sent over from the scim system.
+1.) Provision users on demand in the entra enterprise application
+
