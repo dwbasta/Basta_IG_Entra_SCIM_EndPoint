@@ -70,4 +70,4 @@ netsh http add sslcert ipport=0.0.0.0:443 certhash=<thumbprint> appid="{<your-gu
 ## Additional Attributes
 For the most part the SCIM endpoints loops through and does not need to add the code to handle new attributes sent over from the scim system.
 1.) Provision users on demand in the entra enterprise application
-
+![UserProvisioned](https://github.com/dwbasta/Basta_IG_Entra_SCIM_EndPoint/blob/powershell-addtions/Images/PVDefaultAttributes.png)
