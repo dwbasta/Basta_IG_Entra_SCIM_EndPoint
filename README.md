@@ -65,3 +65,15 @@ netsh http add sslcert ipport=0.0.0.0:443 certhash=<thumbprint> appid="{<your-gu
 ```
 4.) Change the script to useHttps to true
 5.) Run the Sript with administrative rights
+
+
+## Additional Attributes
+For the most part the SCIM endpoints loops through and does not need to add the code to handle new attributes sent over from the scim system.
+1.) Provision users on demand in the entra enterprise application
+![UserProvisioned](https://github.com/dwbasta/Basta_IG_Entra_SCIM_EndPoint/blob/powershell-addtions/Images/PVDefaultAttributes.png)
+2.) Check that default users are provisioned on the console of your SCIM endpoint (the Powershell terminal) 
+![ConsoleUserCreate](https://github.com/dwbasta/Basta_IG_Entra_SCIM_EndPoint/blob/powershell-addtions/Images/TerminalOutput.png)
+3.) Modify an attribute that you didnt already have on the entra user object and run ondemand provisioning again.
+![AttributeAdd](https://github.com/dwbasta/Basta_IG_Entra_SCIM_EndPoint/blob/powershell-addtions/Images/ProvisionAttributeUpdate.png)
+4.) Check the console to make sure one that we can update attributes and secondly dynamically add additional attributes even if not configure in the application.
+![ReviewConsole](https://github.com/dwbasta/Basta_IG_Entra_SCIM_EndPoint/blob/powershell-addtions/Images/ConsoleConfirmation.png)

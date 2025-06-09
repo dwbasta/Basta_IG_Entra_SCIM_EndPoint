@@ -3,7 +3,7 @@
 # =====================================================
 $Hostname    = "TestServer.Example.com"
 $BearerToken = "ThisIsYourAPIKeySoChangeMe"
-$useHttps    = $false    # <-- Set $true for HTTPS (requires a valid certificate on port 443), or $false for HTTP (port 80)
+$useHttps    = $false    # Set $true for HTTPS, or $false for HTTP
 
 # Determine protocol and port based on $useHttps value.
 if ($useHttps) {
@@ -30,7 +30,7 @@ $listener.Start()
 Write-Host "SCIM test server running. Expected hostname: ${protocol}://${Hostname}:${port}/scim/"
 
 # =====================================================
-# Sample In-Memory User Store (add additional attributes as needed)
+# In-Memory User Store (sample user)
 # =====================================================
 $users = @(
     @{
@@ -198,33 +198,34 @@ while ($listener.IsListening) {
             $responseBody = $errorResponse | ConvertTo-Json -Depth 10
         }
     }
-    # POST /scim/users (create a new user)
+    # POST /scim/users (create a new user with dynamic attribute merging)
     elseif ((($path -eq "/scim/users") -or ($path -eq "/scim/users/")) -and $request.HttpMethod -eq "POST") {
-        $body = Read-RequestBody $request
-        $newUser = $body | ConvertFrom-Json
+        $body = Read-RequestBody $request | ConvertFrom-Json
         $newId = ([int]$users[-1].id + 1).ToString()
-        $userObj = @{
-            id       = $newId
-            userName = $newUser.userName
-            name     = $newUser.name
-            active   = $newUser.active
-            # Add any additional attributes as needed.
+        # Create new user with auto-assigned id.
+        $userObj = [ordered]@{ id = $newId }
+        # Merge all properties from the incoming JSON, except any id property.
+        foreach ($property in $body.PSObject.Properties) {
+            if ($property.Name -ne "id") {
+                $userObj[$property.Name] = $property.Value
+            }
         }
         $users += $userObj
         $response.StatusCode = 201
         $responseBody = ConvertTo-ScimJson -user $userObj -attributes @()
     }
-    # PATCH /scim/users/{id} (update an existing user)
+    # PATCH /scim/users/{id} (update an existing user with dynamic attribute merging)
     elseif ($path -match "^/scim/users/(\d+)$" -and $request.HttpMethod -eq "PATCH") {
         $userId = $matches[1]
         $body = Read-RequestBody $request | ConvertFrom-Json
         $user = $users | Where-Object { $_.id -eq $userId }
         if ($user) {
-            if ($body.userName) { $user.userName = $body.userName }
-            if ($body.name)     { $user.name = $body.name }
-            # Use backward null check as recommended:
-            if ($null -ne $body.active) { $user.active = $body.active }
-            # Update additional attributes if provided.
+            # Update any property provided in the request, except the id.
+            foreach ($property in $body.PSObject.Properties) {
+                if ($property.Name -ne "id") {
+                    $user[$property.Name] = $property.Value
+                }
+            }
             $responseBody = ConvertTo-ScimJson -user $user -attributes @()
         }
         else {
