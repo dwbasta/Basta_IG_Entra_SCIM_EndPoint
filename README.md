@@ -77,3 +77,7 @@ For the most part the SCIM endpoints loops through and does not need to add the 
 ![AttributeAdd](https://github.com/dwbasta/Basta_IG_Entra_SCIM_EndPoint/blob/powershell-addtions/Images/ProvisionAttributeUpdate.png)
 4.) Check the console to make sure one that we can update attributes and secondly dynamically add additional attributes even if not configure in the application.
 ![ReviewConsole](https://github.com/dwbasta/Basta_IG_Entra_SCIM_EndPoint/blob/powershell-addtions/Images/ConsoleConfirmation.png)
+
+
+
+<meta name="google-site-verification" content="bwfq2dStYqtf7epTEanIUsvxPpJ30ZEv2Dom3VQlL5M" />
